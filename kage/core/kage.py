@@ -19,7 +19,8 @@ class Kage(base.Base):
     # ================
     def do_list(self, args):
         '''Lists all listeners and their status.'''
-        print('Listeners.')
+        for _,s in sentinel.SENTINELS.items():
+            print(s._name)
 
     def do_start(self, args):
         '''Starts a new listener.'''
@@ -57,8 +58,14 @@ class Kage(base.Base):
         args = args.split()
         name = args[0]
         try:
-            sentinel.SENTINELS[name].kill()
-            del sentinel.SENTINELS[name]
+            if name == 'all':
+                all_s = sentinel.SENTINELS.keys()
+                for s in all_s:
+                    sentinel.SENTINELS[s].kill()
+                sentinel.SENTINELS.clear()
+            else:
+                sentinel.SENTINELS[name].kill()
+                del sentinel.SENTINELS[name]
         except KeyError:
             printError(f"Sentinel '{name}' is not active.")
 
