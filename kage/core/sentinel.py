@@ -1,9 +1,13 @@
+# This is the Sentinel (aka: listening post) module.
+# Responbile for setting up an HTTP server.
+
 from multiprocessing.context import Process
 from kage.core.common import *
 
 import threading, sys, logging
 import flask
 
+# Keep track of all active Sentinels and Ports in use.
 SENTINELS = {}
 PORTS_IN_USE = []
 
@@ -31,6 +35,11 @@ class Sentinel():
             '''Register a Shadow (agent) with name'''
             if flask.request.method == 'POST':
                 data = flask.request.get_json()
+                username = data["username"]
+                hostname = data["hostname"]
+                shadow_remote_ip = flask.request.remote_addr
+                print()
+                printInfo(f"Registering {YELLOW}{hostname}/{username} {RESET}from {RED}{shadow_remote_ip}")
                 # Create Shadow object and store in database
                 # db.storeShadow(shadow)
                 return "OK."
@@ -54,7 +63,7 @@ class Sentinel():
         '''
         Creates a new process and thread to run the server daemon. 
         '''
-        self.server_process = Process(target=self.app.run, args=("127.0.0.1", str(self._port)))
+        self.server_process = Process(target=self.app.run, args=("0.0.0.0", str(self._port)))
         
         # Disable cli logging
         cli = sys.modules['flask.cli']

@@ -19,8 +19,17 @@ class Kage(base.Base):
     # ================
     def do_list(self, args):
         '''Lists all listeners and their status.'''
-        for _,s in sentinel.SENTINELS.items():
-            print(s._name)
+        args = args.split()
+        if len(args) != 1:
+            printError(f"List what?")
+            return
+        if args[0] == 'sentinels':
+            for _,s in sentinel.SENTINELS.items():
+                print(s._name)
+        elif args[0] == 'shadows':
+            pass
+        else:
+            printError("Invalid argument.")
 
     def do_start(self, args):
         '''Starts a new listener.'''
